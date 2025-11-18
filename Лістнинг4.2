@@ -1,0 +1,57 @@
+# Константа розміру таблиці
+M = 13
+# Вхідні слова (позначаємо два слова "не" як НЕ1 і НЕ2)
+WORDS = [
+    "СЛОВО",
+    "НЕ1",
+    "ГОРОБЕЦЬ",
+    "ВИЛЕТИТЬ",
+    "НЕ2",
+    "СПІЙМАЄШ"
+]
+# Український алфавіт (позиції букв)
+LETTER_POSITIONS = {
+    'А': 1,  'Б': 2,  'В': 3,  'Г': 4,  'Ґ': 5,  'Д': 6,
+    'Е': 7,  'Є': 8,  'Ж': 9,  'З': 10, 'И': 11, 'І': 12,
+    'Ї': 13, 'Й': 14, 'К': 15, 'Л': 16, 'М': 17, 'Н': 18,
+    'О': 19, 'П': 20, 'Р': 21, 'С': 22, 'Т': 23, 'У': 24,
+    'Ф': 25, 'Х': 26, 'Ц': 27, 'Ч': 28, 'Ш': 29, 'Щ': 30,
+    'Ь': 31, 'Ю': 32, 'Я': 33
+}
+def primary_hash(key: str) -> int:
+    """
+    Первинна хеш-функція:
+    h(k) = (сума позицій букв key) mod M
+    """
+    total = 0
+    for char in key:
+        total += LETTER_POSITIONS.get(char, 0)
+    return total % M
+def build_closed_hash_table(words: list, m: int) -> list:
+    """
+    Побудова хеш-таблиці з відкритою адресацією (лінійне пробування).
+    """
+    table = [None] * m
+    for word in words:
+        start = primary_hash(word)
+
+        for i in range(m):
+            address = (start + i) % m
+
+            if table[address] is None:
+                table[address] = word
+                break
+        else:
+            print(f"Помилка: таблиця повна, не можна додати {word}")
+    return table
+def display_hash_table(table: list):
+    """Вивести таблицю у зручному форматі."""
+    print("\n--- Хеш-таблиця (Відкрита адресація, M=13) ---")
+    print("Індекс | Слово")
+    print("-------|--------")
+    for i, item in enumerate(table):
+        value = item if item is not None else "(NULL)"
+        print(f"{i:02d}    | {value}")
+# Виконання
+hash_table = build_closed_hash_table(WORDS, M)
+display_hash_table(hash_table)
